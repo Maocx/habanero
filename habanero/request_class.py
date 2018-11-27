@@ -1,3 +1,5 @@
+import time
+
 import requests
 import json
 import re
@@ -54,8 +56,9 @@ class Request(object):
     payload.update(filter_dict(self.kwargs))
     # rename query filters
     payload = rename_query_filters(payload)
-
+    start_time = time.time()
     js = self._req(payload = payload)
+    print("First request in ", time.time() - start_time)
     cu = js['message'].get('next-cursor')
     max_avail = js['message']['total-results']
     res = self._redo_req(js, payload, cu, max_avail)
@@ -67,10 +70,15 @@ class Request(object):
       total = len(js['message']['items'])
       while(cu.__class__.__name__ != 'NoneType' and self.cursor_max > total and total < max_avail):
         payload['cursor'] = cu
+        start_time = time.time()
         out = self._req(payload = payload)
+        print("Internal request in ", time.time() - start_time)
         cu = out['message'].get('next-cursor')
         res.append(out)
         total = sum([ len(z['message']['items']) for z in res ])
+        # This code is not built for resuming with a cursor!
+        if(len(out["message"]['items'])<1):
+          break
       return res
     else:
       return js
