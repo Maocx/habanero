@@ -29,8 +29,11 @@ def request(mailto, url, path, ids = None, query = None, filter = None,
   payload = dict((k, v) for k, v in payload.items() if v)
   # add query filters
   payload.update(filter_dict(kwargs))
+
   # rename query filters
   payload = rename_query_filters(payload)
+
+  print("Payload in request", payload)
 
   if(ids.__class__.__name__ == 'NoneType'):
     url = url.strip("/")

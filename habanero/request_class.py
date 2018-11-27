@@ -65,6 +65,10 @@ class Request(object):
     return res
 
   def _redo_req(self, js, payload, cu, max_avail):
+    print("cu", cu)
+    print("payload",payload)
+    print("max_avail", max_avail)
+    print(self.cursor_max)
     if(cu.__class__.__name__ != 'NoneType' and self.cursor_max > len(js['message']['items'])):
       res = [js]
       total = len(js['message']['items'])
